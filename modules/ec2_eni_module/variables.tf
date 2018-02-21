@@ -18,5 +18,12 @@ variable "vpc_tag_name" {
   type = "string"
 }
 
-variable "user_data" {
+variable "key_name" {
+  type = "string"
 }
+
+variable "ec2_tag_name" {
+  type = "string"
+}
+
+variable "user_data" {}
