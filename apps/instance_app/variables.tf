@@ -24,3 +24,11 @@ variable "key_name" {
 variable "ec2_tag_name" {
   type = "string"
 }
+
+variable "group_name" {
+  type = "string"
+}
+
+variable "region" {
+  type = "string"
+}

@@ -14,6 +14,6 @@ data "aws_security_group" "security_group" {
 
   filter {
     name   = "group-name"
-    values = ["${var.vpc_tag_name}"]
+    values = ["${var.group_name}"]
   }
 }

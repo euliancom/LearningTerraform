@@ -10,4 +10,5 @@ module "child"{
   ec2_tag_name    = "${var.ec2_tag_name}"
   key_name        = "${var.key_name}"
   instance_ami    = "${var.instance_ami}"
+  group_name      = "${var.group_name}"
 }
