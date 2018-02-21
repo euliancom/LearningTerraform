@@ -1,0 +1,8 @@
+subnet_id       = "subnet-007ce764"
+eni_private_ips = "172.31.12.100"
+instance_type   = "t2.micro"
+vpc_tag_name    = "default"
+ec2_tag_name    = "ec2_name"
+key_name        = "key-pair"
+instance_ami    = "ami-97785bed"
+region          = "us-west-2"

@@ -13,4 +13,8 @@ export CLOUD_REVISION=
 export CLOUD_DOMAIN="cc.oneplatform.build"
 export CLOUD_APP="dii-core-server"
 EOF
+
+  vars {
+    
+  }
 }
