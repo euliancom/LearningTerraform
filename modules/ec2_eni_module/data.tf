@@ -5,7 +5,7 @@ data "aws_subnet" "public_a" {
 
 data "aws_vpc" "selected" {
  tags {
-   Name = "${vpc_tag_name}"
+   Name = "${var.vpc_tag_name}"
  }
 }
 
@@ -14,6 +14,6 @@ data "aws_security_group" "security_group" {
 
   filter {
     name   = "group-name"
-    values = ["${vpc_tag_name}"]
+    values = ["${var.vpc_tag_name}"]
   }
-} 
+}
