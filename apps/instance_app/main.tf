@@ -1,5 +1,5 @@
 module "child" {
-  source = "../../modules/ec2-eni"
+  source = "../../modules/ec2-eni_module"
 
   user_data = "${data.template_file.user_data}"
 }
