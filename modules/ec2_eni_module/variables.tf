@@ -19,5 +19,4 @@ variable "vpc_tag_name" {
 }
 
 variable "user_data" {
-  type = "string"
 }
