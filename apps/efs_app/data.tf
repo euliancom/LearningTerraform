@@ -1,5 +1,5 @@
 data "template_file" "user_data" {
- template = <<EOF
+  template = <<EOF
 export CLOUD_ENVIRONMENT=dev
 export CLOUD_SUBENVIRONMENT=stable
 export EMAIL_RECIPIENT=jeffrey.cruz@Clarivate.com

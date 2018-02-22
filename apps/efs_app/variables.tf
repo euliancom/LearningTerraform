@@ -13,6 +13,7 @@ variable "instance_ami" {
 variable "instance_type" {
   type = "string"
 }
+
 variable "vpc_tag_name" {
   type = "string"
 }
@@ -34,5 +35,13 @@ variable "region" {
 }
 
 variable "account_id" {
+  type = "string"
+}
+
+variable "creation_token" {
+  type = "string"
+}
+
+variable "efs_tag_name" {
   type = "string"
 }
