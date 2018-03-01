@@ -1,7 +1,7 @@
 resource "aws_elb" "load_balancer" {
   name            = "${var.elb_name}"
-  subnets         = ["${var.subnet_ids}"]
-  security_groups = ["${var.security_groups}"]
+  subnets         = ["${var.subnet_id}"]
+  security_groups = ["${var.group_name}"]
 
   listener {
     instance_port     = 8000
