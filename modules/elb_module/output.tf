@@ -4,3 +4,6 @@ output "elb_dns_name" {
 output "elb_zone_id" {
   value = "${aws_elb.load_balancer.zone_id}"
 }
+output "elb_id" {
+  value = "${aws_elb.load_balancer.id}"
+}

@@ -6,12 +6,12 @@ variable "elb_availability_zones" {
   type = "list"
 }
 
-variable "subnet_ids" {
-  type = "list"
+variable "subnet_id" {
+  type = "string"
 }
 
-variable "security_groups" {
-  type = "list"
+variable "group_name" {
+  type = "string"
 }
 
 variable "elb_tag_name" {
