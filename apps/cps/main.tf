@@ -1,8 +1,8 @@
 module "cps" {
-  source = "./modules/cps"
+  source = "../../modules/cps"
 
   env = "${var.env}"
-  
+
   ######################
   # CPS security group #
   ######################
