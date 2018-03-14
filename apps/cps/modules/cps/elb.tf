@@ -2,60 +2,126 @@
 # cps aws elb #
 ###############
 
-module "cps_aws_elb" {
-  source = "../elb-create"
-  env             = "${var.env}"
-  elb_count       = "${var.cps_elb_count}"
-  name            = "${var.efs_elb_names}"
+resource "aws_elb" "cps_aws_elb" {
+  name            = "${element(var.efs_elb_names,count.index)}-${var.env}"
   internal        = "${var.efs_elb_internal}"
-  subnet_ids      = ["${var.subnet_id}"]
-  security_groups = ["sg-63961f19","sg-a61d34da","sg-1848c061","sg-4f4c5c37","sg-d55b79a9"]  
-  //security_groups = ["${var.infra_bastion_sg}", "${module.efs_aws_security_group.sg_id}", "${module.cps_aws_security_group.sg_id}"]
-  instance_ports  = "${var.cps_instance_ports}"
-  elb_port        = 80
-  instance_id     = ["${module.cps_ec2.instance_id}"]
-  tag_name        = "${var.efs_elb_names}"
-  tags_default    = "${module.merge_tags_list.tags_default}"
+  count           = "${var.cps_elb_count}"
+  subnets         = ["${var.subnet_id}"]
+  security_groups = ["sg-63961f19", "sg-a61d34da", "sg-1848c061", "sg-4f4c5c37", "sg-d55b79a9"]
+
+  listener {
+    instance_port     = "${element(var.cps_instance_ports,count.index)}"
+    instance_protocol = "${var.instance_protocol}"
+    lb_port           = 80
+    lb_protocol       = "${var.lb_protocol}"
+  }
+
+  health_check {
+    healthy_threshold   = "${var.healthy_threshold}"
+    unhealthy_threshold = "${var.unhealthy_threshold}"
+    timeout             = "${var.timeout}"
+    target              = "TCP:${element(var.cps_instance_ports,count.index)}"
+    interval            = "${var.interval}"
+  }
+
+  instances                   = ["${aws_instance.ec2_create_multiple_without_private_ip.instance_id}"]
+  cross_zone_load_balancing   = "${var.cross_zone_load_balancing}"
+  idle_timeout                = "${var.idle_timeout}"
+  connection_draining         = "${var.connection_draining}"
+  connection_draining_timeout = "${var.connection_draining_timeout}"
+
+  tags = "${merge(
+      module.merge_tags_list.tags_default,
+      map(
+         "Name", 
+         "${element(var.efs_elb_names,count.index)}-${var.env}",
+         )
+      )
+  }"
 }
 
 ##########################
 # cps aws route53 apache #
 ##########################
 
-module "cps_aws_elb_apache" {
-  source = "../elb-create"
-  env             = "${var.env}"
-  elb_count       = 1
-  name            = ["cats-engine"]
+resource "aws_elb" "cps_aws_elb_apache" {
+  name            = "cats-engine-${var.env}"
   internal        = "${var.efs_elb_internal}"
-  subnet_ids      = ["${var.subnet_id}"]
-  security_groups = ["sg-63961f19","sg-a61d34da","sg-1848c061","sg-4f4c5c37","sg-d55b79a9"]  
-  //security_groups = ["${var.infra_bastion_sg}", "${module.efs_aws_security_group.sg_id}", "${module.cps_aws_security_group.sg_id}"]
-  instance_ports  = [9595]
-  elb_port        = 80
-  instance_id     = ["${module.cps_ec2.instance_id}"]
-  tag_name        = ["cats-engine"]
-  tags_default    = "${module.merge_tags_list.tags_default}"
+  count           = 1
+  subnets         = ["${var.subnet_id}"]
+  security_groups = ["sg-63961f19", "sg-a61d34da", "sg-1848c061", "sg-4f4c5c37", "sg-d55b79a9"]
+
+  listener {
+    instance_port     = [9595]
+    instance_protocol = "${var.instance_protocol}"
+    lb_port           = 80
+    lb_protocol       = "${var.lb_protocol}"
+  }
+
+  health_check {
+    healthy_threshold   = "${var.healthy_threshold}"
+    unhealthy_threshold = "${var.unhealthy_threshold}"
+    timeout             = "${var.timeout}"
+    target              = "TCP:9595"
+    interval            = "${var.interval}"
+  }
+
+  instances                   = ["${aws_instance.ec2_create_multiple_without_private_ip.instance_id}"]
+  cross_zone_load_balancing   = "${var.cross_zone_load_balancing}"
+  idle_timeout                = "${var.idle_timeout}"
+  connection_draining         = "${var.connection_draining}"
+  connection_draining_timeout = "${var.connection_draining_timeout}"
+
+  tags = "${merge(
+      module.merge_tags_list.tags_default,
+      map(
+         "Name", 
+         "cats-engine-${var.env}",
+         )
+      )
+  }"
 }
 
 ##############
 # cps Jscape #
 ##############
 
-module "cps_aws_elb_jscape" {
-  source = "../elb-create"
-  env             = "${var.env}"
-  elb_count       = 1
-  name            = ["jscape"]
+resource "aws_elb" "cps_aws_elb_jscape" {
+  name            = "jscape-${var.env}"
   internal        = "${var.efs_elb_internal}"
-  subnet_ids      = ["${var.subnet_id}"]
-  security_groups = ["sg-63961f19","sg-a61d34da","sg-1848c061","sg-4f4c5c37","sg-d55b79a9"]  
-  //security_groups = ["${var.infra_bastion_sg}", "${module.efs_aws_security_group.sg_id}", "${module.cps_aws_security_group.sg_id}"]
-  instance_ports  = [8521]
-  elb_port        = 80
-  instance_id     = ["${module.cps_jscape.instance_id}"]
-  tag_name        = ["jscape"]
-  tags_default    = "${module.merge_tags_list.tags_default}"
+  count           = 1
+  subnets         = ["${var.subnet_id}"]
+  security_groups = ["sg-63961f19", "sg-a61d34da", "sg-1848c061", "sg-4f4c5c37", "sg-d55b79a9"]
+
+  listener {
+    instance_port     = [8521]
+    instance_protocol = "${var.instance_protocol}"
+    lb_port           = 80
+    lb_protocol       = "${var.lb_protocol}"
+  }
+
+  health_check {
+    healthy_threshold   = "${var.healthy_threshold}"
+    unhealthy_threshold = "${var.unhealthy_threshold}"
+    timeout             = "${var.timeout}"
+    target              = "TCP:8521"
+    interval            = "${var.interval}"
+  }
+
+  instances                   = ["${aws_instance.ec2_create_multiple_with_private_ip.instance_id}"]
+  cross_zone_load_balancing   = "${var.cross_zone_load_balancing}"
+  idle_timeout                = "${var.idle_timeout}"
+  connection_draining         = "${var.connection_draining}"
+  connection_draining_timeout = "${var.connection_draining_timeout}"
+
+  tags = "${merge(
+      module.merge_tags_list.tags_default,
+      map(
+         "Name", 
+         "jscape-${var.env}",
+         )
+      )
+  }"
 }
 
 ######################
@@ -63,27 +129,26 @@ module "cps_aws_elb_jscape" {
 ######################
 
 resource "aws_elb" "cps_jscape_aws_elb_server" {
-  name     = "${var.efs_elb_name}-${var.env}"
-  internal = "${var.efs_elb_internal}"
-  count    = 1
+  name            = "${var.efs_elb_name}-${var.env}"
+  internal        = "${var.efs_elb_internal}"
+  count           = 1
   subnets         = ["${var.subnet_id}"]
-  security_groups = ["sg-63961f19","sg-1848c061","sg-4f4c5c37","sg-d55b79a9"]
+  security_groups = ["sg-63961f19", "sg-1848c061", "sg-4f4c5c37", "sg-d55b79a9"]
+
   //security_groups = ["${var.infra_bastion_sg}", "${module.efs_aws_security_group.sg_id}", "${module.cps_aws_security_group.sg_id}","sg-63961f19"]
-  
+
   listener {
     instance_port     = 11880
     instance_protocol = "http"
     lb_port           = 11880
     lb_protocol       = "http"
   }
-
   listener {
     instance_port     = 11880
     instance_protocol = "http"
     lb_port           = 80
     lb_protocol       = "http"
   }
-
   health_check {
     healthy_threshold   = 2
     unhealthy_threshold = 5
@@ -91,13 +156,11 @@ resource "aws_elb" "cps_jscape_aws_elb_server" {
     target              = "TCP:11880"
     interval            = 30
   }
-
-  instances                   = ["${module.cps_jscape.instance_id}"]
+  instances                   = ["${aws_instance.ec2_create_multiple_with_private_ip.instance_id}"]
   cross_zone_load_balancing   = true
   idle_timeout                = 400
   connection_draining         = true
   connection_draining_timeout = 400
-
   tags = "${merge(
       module.merge_tags_list.tags_default,
       map(

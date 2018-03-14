@@ -103,6 +103,11 @@ variable "vpc_id" {}
 variable "subnet_id" {}
 variable "infra_bastion_sg" {}
 
+variable "tags_default" {
+  type    = "map"
+  default = {}
+}
+
 ###########
 # ec2 cps #
 ###########
@@ -118,8 +123,15 @@ variable "cps_instance_name" {}
 ###########
 
 variable "cps_elb_count" {}
-variable "efs_elb_names" {type = "list"}
-variable "cps_instance_ports" {type = "list"}
+
+variable "efs_elb_names" {
+  type = "list"
+}
+
+variable "cps_instance_ports" {
+  type = "list"
+}
+
 variable "dns_zone_name" {}
 
 //variable "cps_user_data" {}
@@ -148,3 +160,58 @@ variable "efs_elb_internal" {}
 variable "efs_elb_tag_name" {}
 variable "cps_jscape_elb_port" {}
 variable "cps_jscape_instance_port" {}
+
+variable "internal" {
+  default = "false"
+}
+
+variable "instance_protocol" {
+  default = "http"
+}
+
+# variable "elb_port" {}
+
+variable "elb_count" {
+  default = 1
+}
+
+variable "lb_protocol" {
+  default = "http"
+}
+
+variable "healthy_threshold" {
+  default = 2
+}
+
+variable "unhealthy_threshold" {
+  default = 5
+}
+
+variable "timeout" {
+  default = 3
+}
+
+variable "interval" {
+  default = 30
+}
+
+variable "cross_zone_load_balancing" {
+  default = true
+}
+
+variable "idle_timeout" {
+  default = 400
+}
+
+variable "connection_draining" {
+  default = true
+}
+
+variable "connection_draining_timeout" {
+  default = 400
+}
+
+variable "tag_name" {
+  default = []
+  type    = "list"
+}

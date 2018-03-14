@@ -2,124 +2,134 @@
 # cps aws security group #
 ##########################
 
-module "cps_aws_security_group" {
-  source = "../sg-create"
+resource "aws_security_group" "cps_aws_security_group" {
+  name        = "${var.cps_sg_name}"
+  description = "${var.cps_sg_description}"
+  vpc_id      = "${var.vpc_id}"
 
-  name         = "${var.cps_sg_name}"
-  description  = "${var.cps_sg_description}"
-  vpc_id       = "${var.vpc_id}"
-  tag_name     = "${var.cps_sg_tag_name}"
-  tags_default = "${module.merge_tags_list.tags_default}"
+  tags = "${merge(
+      module.merge_tags_list.tags_default,
+      map(
+         "Name", 
+         "${var.cps_sg_tag_name}",
+         )
+      )
+  }"
 }
 
 #################################
 # cps sg rules without cidr all #
 #################################
 
-module "cps_cps_sg_rules_without_cidr_all" {
-  source = "../sg-rules-without-cidr"
-
+resource "aws_security_group_rule" "cps_cps_sg_rules_without_cidr_all" {
   type              = "${var.sg_rule_type_ingress}"
-  ports             = "${var.cps_sg_rule_ports_all}"
+  count             = "${length(var.cps_sg_rule_ports_all)}"
+  from_port         = "${element(var.cps_sg_rule_ports_all, count.index)}"
+  to_port           = "${element(var.cps_sg_rule_ports_all, count.index)}"
   protocol          = "${var.sg_rule_protocol_all}"
-  sg_self           = "${var.sg_rule_self}"
-  security_group_id = "${module.cps_aws_security_group.sg_id}"
+  self              = "${var.sg_rule_self}"
+  security_group_id = "${aws_security_group.cps_aws_security_group.id}"
 }
 
 #################################
 # cps sg rules without cidr tcp #
 #################################
 
-module "cps_cps_sg_rules_without_cidr_tcp" {
-  source = "../sg-rules-without-cidr"
-
+resource "aws_security_group_rule" "cps_cps_sg_rules_without_cidr_tcp" {
   type              = "${var.sg_rule_type_ingress}"
-  ports             = "${var.cps_sg_rule_ports_tcp}"
+  count             = "${length(var.cps_sg_rule_ports_tcp)}"
+  from_port         = "${element(var.cps_sg_rule_ports_tcp, count.index)}"
+  to_port           = "${element(var.cps_sg_rule_ports_tcp, count.index)}"
   protocol          = "${var.sg_rule_protocol_tcp}"
-  sg_self           = "${var.sg_rule_self}"
-  security_group_id = "${module.cps_aws_security_group.sg_id}"
+  self              = "${var.sg_rule_self}"
+  security_group_id = "${aws_security_group.cps_aws_security_group.sg_id}"
 }
 
 ##############################
 # cps sg rules with cidr all #
 ##############################
 
-module "cps_cps_sg_rules_with_cidr_all" {
-  source = "../sg-rules-with-cidr"
-
+resource "aws_security_group_rule" "cps_cps_sg_rules_with_cidr_all" {
   type              = "${var.sg_rule_type_egress}"
-  ports             = "${var.cps_sg_rule_ports_to_cidr_all}"
+  count             = "${length(var.cps_sg_rule_ports_to_cidr_all)}"
+  from_port         = "${element(var.cps_sg_rule_ports_to_cidr_all, count.index)}"
+  to_port           = "${element(var.cps_sg_rule_ports_to_cidr_all, count.index)}"
   protocol          = "${var.sg_rule_protocol_all}"
-  sg_cidr_blocks    = "${var.sg_cidr_blocks}"
-  security_group_id = "${module.cps_aws_security_group.sg_id}"
+  cidr_blocks       = ["${var.sg_cidr_blocks}"]
+  security_group_id = "${aws_security_group.cps_aws_security_group.sg_id}"
 }
 
 ##############################
 # cps sg rules with cidr tcp #
 ##############################
 
-module "cps_cps_sg_rules_with_cidr_tcp" {
-  source = "../sg-rules-with-cidr"
-
+resource "aws_security_group_rule" "cps_cps_sg_rules_with_cidr_tcp" {
   type              = "${var.sg_rule_type_ingress}"
-  ports             = "${var.cps_sg_rule_ports_to_cidr_tcp}"
+  count             = "${length(var.cps_sg_rule_ports_to_cidr_tcp)}"
+  from_port         = "${element(var.cps_sg_rule_ports_to_cidr_tcp, count.index)}"
+  to_port           = "${element(var.cps_sg_rule_ports_to_cidr_tcp, count.index)}"
   protocol          = "${var.sg_rule_protocol_tcp}"
-  sg_cidr_blocks    = "${var.sg_cidr_blocks}"
-  security_group_id = "${module.cps_aws_security_group.sg_id}"
+  cidr_blocks       = ["${var.sg_cidr_blocks}"]
+  security_group_id = "${aws_security_group.cps_aws_security_group.sg_id}"
 }
 
 ##########################
 # efs aws security group #
 ##########################
 
-module "efs_aws_security_group" {
-  source = "../sg-create"
-
+resource "aws_security_group" "efs_aws_security_group" {
   name        = "${var.efs_sg_name}"
   description = "${var.efs_sg_description}"
   vpc_id      = "${var.vpc_id}"
-  tag_name    = "${var.efs_sg_tag_name}"
-  tags_default = "${module.merge_tags_list.tags_default}"
+
+  tags = "${merge(
+      module.merge_tags_list.tags_default,
+      map(
+         "Name", 
+         "${var.efs_sg_tag_name}",
+         )
+      )
+  }"
 }
 
 #################################
 # efs sg rules without cidr tcp #
 #################################
 
-module "efs_cps_sg_rules_without_cidr_tcp" {
-  source = "../sg-rules-without-cidr"
-
+resource "aws_security_group_rule" "efs_cps_sg_rules_without_cidr_tcp" {
   type              = "${var.sg_rule_type_ingress}"
-  ports             = "${var.efs_sg_rule_ports_tcp}"
+  count             = "${length(var.efs_sg_rule_ports_tcp)}"
+  from_port         = "${element(var.efs_sg_rule_ports_tcp, count.index)}"
+  to_port           = "${element(var.efs_sg_rule_ports_tcp, count.index)}"
   protocol          = "${var.sg_rule_protocol_tcp}"
-  sg_self           = "${var.sg_rule_self}"
-  security_group_id = "${module.efs_aws_security_group.sg_id}"
+  self              = "${var.sg_rule_self}"
+  security_group_id = "${aws_security_group.efs_aws_security_group.sg_id}"
 }
 
 ##############################
 # efs sg rules with cidr all #
 ##############################
 
-module "efs_cps_sg_rules_with_cidr_all" {
-  source = "../sg-rules-with-cidr"
-
+resource "aws_security_group_rule" "efs_cps_sg_rules_with_cidr_all" {
   type              = "${var.sg_rule_type_egress}"
-  ports             = "${var.efs_sg_rule_ports_to_cidr_all}"
+  count             = "${length(var.efs_sg_rule_ports_to_cidr_all)}"
+  from_port         = "${element(var.efs_sg_rule_ports_to_cidr_all, count.index)}"
+  to_port           = "${element(var.efs_sg_rule_ports_to_cidr_all, count.index)}"
   protocol          = "${var.sg_rule_protocol_all}"
-  sg_cidr_blocks    = "${var.sg_cidr_blocks}"
-  security_group_id = "${module.efs_aws_security_group.sg_id}"
+  cidr_blocks       = ["${var.sg_cidr_blocks}"]
+  security_group_id = "${aws_security_group.efs_aws_security_group.sg_id}"
 }
 
 ###########################
 # efs sg rules to/from sg #
 ###########################
 
-module "efs_cps_sg_rules_to_from_sg" {
-  source = "../sg-rules-to-from-sg"
-
+resource "aws_security_group_rule" "efs_cps_sg_rules_to_from_sg" {
   type                     = "${var.sg_rule_type_ingress}"
-  ports                    = "${var.efs_sg_rule_ports_to_sg}"
+  count                    = "${length(var.efs_sg_rule_ports_to_sg)}"
+  from_port                = "${element(var.efs_sg_rule_ports_to_sg, count.index)}"
+  to_port                  = "${element(var.efs_sg_rule_ports_to_sg, count.index)}"
   protocol                 = "${var.sg_rule_protocol_all}"
-  source_security_group_id = "${module.cps_aws_security_group.sg_id}"
-  security_group_id        = "${module.efs_aws_security_group.sg_id}"
+  source_security_group_id = "${aws_security_group.cps_aws_security_group.sg_id}"
+  security_group_id        = "${aws_security_group.efs_aws_security_group.sg_id}"
 }

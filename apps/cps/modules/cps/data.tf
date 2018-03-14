@@ -21,8 +21,8 @@ export CLOUD_DEV_PHASE=stable
 export CLOUD_REVISION=
 export CLOUD_DOMAIN="cc.oneplatform.build"
 export CLOUD_APP="cps"
-export EFS_DATA=${module.cps_aws_efs_mount_target.efs_dns_name}
-export EFS_NONDATA=${module.nondata_aws_efs_mount_target.efs_dns_name}
+export EFS_DATA=${aws_efs_mount_target.efs_mount_target.efs_dns_name}
+export EFS_NONDATA=${aws_efs_mount_target.nondata_aws_efs_mount_target.efs_dns_name}
 EOF
 
   vars {
@@ -44,8 +44,8 @@ export CLOUD_DEV_PHASE=stable
 export CLOUD_REVISION=
 export CLOUD_DOMAIN="cc.oneplatform.build"
 export CLOUD_APP="cps-jscape"
-export EFS_DATA=${module.cps_aws_efs_mount_target.efs_dns_name}
-export EFS_NONDATA=${module.nondata_aws_efs_mount_target.efs_dns_name}
+export EFS_DATA=${aws_efs_mount_target.efs_mount_target.efs_dns_name}
+export EFS_NONDATA=${aws_efs_mount_target.nondata_aws_efs_mount_target.efs_dns_name}
 EOF
 
   vars {

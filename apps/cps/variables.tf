@@ -101,4 +101,3 @@ variable "cps_jscape_elb_port" {}
 variable "cps_jscape_instance_port" {}
 variable "efs_elb_internal" {}
 variable "efs_elb_tag_name" {}
-
