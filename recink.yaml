@@ -1,0 +1,27 @@
+$:
+  preprocess:
+    '$.terraform.vars.access_key': 'eval'
+    '$.terraform.vars.secret_key': 'eval'
+    '$.terraform.vars.region': 'eval'
+  emit:
+    pattern:
+      - /.+\.js$/i
+    ignore:
+      - /^(.*\/)?node_modules(\/?$)?/i
+  terraform:
+    resource: '.resource'
+    cache: false
+    plan: true
+    apply: false
+    destroy: false
+    vars:
+      access_key: 'process.env.AWS_ACCESS_KEY_ID'
+      secret_key: 'process.env.AWS_SECRET_ACCESS_KEY'
+      region: 'process.env.AWS_DEFAULT_REGION'
+
+clarivate_admin_role:
+  root: './apps/instance_app'
+  terraform:
+    version: 1.11.0
+    var-files:
+      - app.tfvars
